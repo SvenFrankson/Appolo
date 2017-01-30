@@ -4,28 +4,46 @@ using UnityEngine;
 
 public class Obstacle : MonoBehaviour {
 
-    public SpaceShipControler SpaceShip;
+	static private float UpdateTime = 0f;
+	static public float S_UpdateTime 
+	{
+		get 
+		{ 
+			return Obstacle.UpdateTime;
+		}
+	}
+
+	public PlayerSpaceship PointOfView;
     private bool Alert = false;
+
+	public void Start() 
+	{
+		this.PointOfView = FindObjectOfType<PlayerSpaceship> ();
+	}
 
     public void Update()
     {
-        float alpha = Vector3.Angle(SpaceShip.transform.forward, this.transform.position - SpaceShip.transform.position);
-        if (alpha < SpaceShip.AngleMin)
+		float t1 = Time.realtimeSinceStartup;
+        float alpha = Vector3.Angle(PointOfView.transform.forward, this.transform.position - PointOfView.transform.position);
+        if (alpha < PointOfView.AngleMin)
         {
             SetAlert(true);
+			UpdateTime += Time.realtimeSinceStartup - t1;
             return;
         }
-        if (alpha < SpaceShip.AngleMax)
+        if (alpha < PointOfView.AngleMax)
         {
-            float sqrDist = (this.transform.position - SpaceShip.transform.position).sqrMagnitude;
-            float dist = (alpha - SpaceShip.AngleMin) / (SpaceShip.AngleMax - SpaceShip.AngleMin) * SpaceShip.DistanceMax;
+            float sqrDist = (this.transform.position - PointOfView.transform.position).sqrMagnitude;
+            float dist = (alpha - PointOfView.AngleMin) / (PointOfView.AngleMax - PointOfView.AngleMin) * PointOfView.DistanceMax;
             if (sqrDist < dist * dist)
             {
-                SetAlert(true);
+				SetAlert(true);
+				UpdateTime += Time.realtimeSinceStartup - t1;
                 return;
             }
         }
-        SetAlert(false);
+		SetAlert(false);
+		UpdateTime += Time.realtimeSinceStartup - t1;
     }
 
     public void SetAlert(bool alert)
