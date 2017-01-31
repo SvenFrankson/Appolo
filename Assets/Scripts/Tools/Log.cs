@@ -4,30 +4,48 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 
-static public class Log {
+public class Log : MonoBehaviour {
 
-//	public enum Level {
-//		INFO,
-//		WARNING,
-//		ERROR,
-//		FATAL,
-//		HOLYSHIT
-//	}
-
-	static private StreamWriter output;
-	static private int LogLevel = 5;
+	public enum Level {
+		INFO,
+		WARNING,
+		ERROR,
+		FATAL,
+		HOLYSHIT
+	}
+    
+    static private Dictionary<string, StreamWriter> LogFiles;
 
 	static Log() {
-		output = new StreamWriter ("output.log", false);
-		string line = "Time : " + DateTime.Now;
-		output.WriteLine (line);
-		output.Close ();
+        Log.LogFiles = new Dictionary<string, StreamWriter>();
 	}
 
-	static public void Info(object o) {
-		output = new StreamWriter ("output.log", true);
+    public void OnApplicationQuit()
+    {
+        foreach (StreamWriter logFile in LogFiles.Values)
+        {
+            string line = "Time : " + DateTime.Now + " logfile now closed.";
+            logFile.WriteLine(line);
+            logFile.Close();
+        }
+    }
+
+    static private StreamWriter GetStreamWriter(string fileName)
+    {
+        if (!LogFiles.ContainsKey(fileName))
+        {
+            StreamWriter logFile = new StreamWriter(fileName + ".log");
+            string line = "Time : " + DateTime.Now;
+            logFile.WriteLine(line);
+            LogFiles.Add(fileName, logFile);
+        }
+
+        return LogFiles[fileName];
+    }
+
+	static public void Info(string fileName, object o) {
+        StreamWriter logFile = GetStreamWriter(fileName);
 		string line = Time.realtimeSinceStartup + " INFO " + o;
-		output.WriteLine (line);
-		output.Close ();
+        logFile.WriteLine (line);
 	}
 }

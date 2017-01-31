@@ -29,8 +29,7 @@ public class AISpaceship : Spaceship
 		}
 		private set {
 			if (value != this.currentAIMode) {
-				Debug.Log (".");
-				Log.Info (this.name + " goes into " + value + " mode.");
+				Log.Info (this.name, "Goes into " + value + " mode.");
 			}
 			this.currentAIMode = value;
 		}
@@ -50,7 +49,7 @@ public class AISpaceship : Spaceship
 	{
 		float t1 = Time.realtimeSinceStartup;
 		float distance = (Target.transform.position - this.transform.position).magnitude;
-		if (distance < - this.CloseDistance)
+		if (distance < this.CloseDistance)
 		{
 			forwardInput = 0f;
 		}
@@ -63,6 +62,7 @@ public class AISpaceship : Spaceship
 			float a = 1f / (this.LongDistance - this.CloseDistance);
 			float b = 1 - (this.LongDistance + this.CloseDistance) / (this.LongDistance - this.CloseDistance) / 2f;
 			forwardInput = a * distance + b;
+            Log.Info(this.name, forwardInput);
 		}
 
 		rightInput = IncommingObstacle ();
@@ -116,7 +116,7 @@ public class AISpaceship : Spaceship
 	public void OnCollisionEnter(Collision collision){
 		Obstacle obstacle = collision.gameObject.GetComponent<Obstacle> ();
 		if (obstacle != null) {
-			Log.Info (this.name + " has hit obstacle");
+			Log.Info (this.name, "Has hit obstacle");
 		}
 	}
 }
