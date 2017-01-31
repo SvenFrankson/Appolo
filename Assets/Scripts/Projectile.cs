@@ -18,11 +18,9 @@ public class Projectile : MonoBehaviour {
 
 	public void OnCollisionEnter(Collision collision)
 	{
-		Debug.Log ("Hit " + collision.gameObject);
 		Spaceship victim = collision.gameObject.GetComponent<Spaceship> ();
 		if (victim != null) 
 		{
-			Debug.Log ("Victim not null");
 			victim.TakeHit (this.Power);
 		}
 	}

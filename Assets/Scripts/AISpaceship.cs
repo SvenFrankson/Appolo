@@ -4,9 +4,37 @@ using UnityEngine;
 
 public class AISpaceship : Spaceship
 {
+	static private float ControlTime = 0f;
+	static public float S_ControlTime
+	{
+		get 
+		{ 
+			return AISpaceship.ControlTime;
+		}
+	}
+
+	public enum AIMode {
+		None,
+		Track,
+		Dodge
+	}
+
 	public float CloseDistance;
 	public float LongDistance;
 	private Spaceship Target;
+	private AIMode currentAIMode = AIMode.None;
+	public AIMode CurrentAIMode {
+		get { 
+			return this.currentAIMode;
+		}
+		private set {
+			if (value != this.currentAIMode) {
+				Debug.Log (".");
+				Log.Info (this.name + " goes into " + value + " mode.");
+			}
+			this.currentAIMode = value;
+		}
+	}
 
 	override protected void OnStart ()
 	{
@@ -20,6 +48,7 @@ public class AISpaceship : Spaceship
 
 	override protected void InputControl (out float forwardInput, out float rightInput)
 	{
+		float t1 = Time.realtimeSinceStartup;
 		float distance = (Target.transform.position - this.transform.position).magnitude;
 		if (distance < - this.CloseDistance)
 		{
@@ -36,13 +65,43 @@ public class AISpaceship : Spaceship
 			forwardInput = a * distance + b;
 		}
 
+		rightInput = IncommingObstacle ();
+		if (rightInput == 0f) {
+			rightInput = TrackTarget ();
+		}
+
+		AISpaceship.ControlTime += (Time.realtimeSinceStartup - t1);
+	}
+
+	private float IncommingObstacle() {
+		Ray ray = new Ray (this.transform.position, this.transform.forward);
+		RaycastHit hitInfo;
+		Physics.SphereCast (ray, 5f, out hitInfo, 10f);
+		if (hitInfo.collider != null) {
+			Obstacle obstacle = hitInfo.collider.GetComponent<Obstacle> ();
+			// In case an obstacle is spotted in front of the vehicle.
+			if (obstacle != null) {
+				float angle = Vector3.Angle(this.transform.forward, obstacle.transform.position - this.transform.position);
+				Vector3 cross = Vector3.Cross(this.transform.forward, obstacle.transform.position - this.transform.position);
+				if (cross.y < 0f)
+				{
+					angle = -angle;
+				}
+				CurrentAIMode = AIMode.Dodge;
+				return -angle / 90f;
+			}
+		}
+		return 0f;
+	}
+
+	private float TrackTarget() {
 		float angle = Vector3.Angle(this.transform.forward, Target.transform.position - this.transform.position);
 		Vector3 cross = Vector3.Cross(this.transform.forward, Target.transform.position - this.transform.position);
 		if (cross.y < 0f)
 		{
 			angle = -angle;
 		}
-		rightInput = angle / 90f;
+		float rightInput = angle / 90f;
 		rightInput = Mathf.Min(rightInput, 1f);
 		rightInput = Mathf.Max(rightInput, -1f);
 
@@ -50,5 +109,14 @@ public class AISpaceship : Spaceship
 		{
 			this.Shoot();
 		}
-	}	
+		CurrentAIMode = AIMode.Track;
+		return rightInput;
+	}
+
+	public void OnCollisionEnter(Collision collision){
+		Obstacle obstacle = collision.gameObject.GetComponent<Obstacle> ();
+		if (obstacle != null) {
+			Log.Info (this.name + " has hit obstacle");
+		}
+	}
 }
