@@ -37,6 +37,7 @@ public class AISpaceship : Spaceship
 
 	override protected void OnStart ()
 	{
+		Log.BeforeApplicationQuit += this.LogStats;
 		this.FindTarget ();
 	}
 	
@@ -62,7 +63,6 @@ public class AISpaceship : Spaceship
 			float a = 1f / (this.LongDistance - this.CloseDistance);
 			float b = 1 - (this.LongDistance + this.CloseDistance) / (this.LongDistance - this.CloseDistance) / 2f;
 			forwardInput = a * distance + b;
-            Log.Info(this.name, forwardInput);
 		}
 
 		rightInput = IncommingObstacle ();
@@ -74,9 +74,9 @@ public class AISpaceship : Spaceship
 	}
 
 	private float IncommingObstacle() {
-		Ray ray = new Ray (this.transform.position, this.transform.forward);
+		Ray ray = new Ray (this.transform.position, this.C_Rigidbody.velocity);
 		RaycastHit hitInfo;
-		Physics.SphereCast (ray, 5f, out hitInfo, 10f);
+		Physics.SphereCast (ray, 4f, out hitInfo, 20f);
 		if (hitInfo.collider != null) {
 			Obstacle obstacle = hitInfo.collider.GetComponent<Obstacle> ();
 			// In case an obstacle is spotted in front of the vehicle.
@@ -107,7 +107,11 @@ public class AISpaceship : Spaceship
 
 		if (Mathf.Abs(angle) < 2f)
 		{
-			this.Shoot();
+			bool canShoot = this.Shoot ();
+			if (canShoot) {
+				this.stats.AddShot ();
+				this.stats.AddShot ();
+			}
 		}
 		CurrentAIMode = AIMode.Track;
 		return rightInput;
@@ -116,6 +120,7 @@ public class AISpaceship : Spaceship
 	public void OnCollisionEnter(Collision collision){
 		Obstacle obstacle = collision.gameObject.GetComponent<Obstacle> ();
 		if (obstacle != null) {
+			this.stats.AddCollision ();
 			Log.Info (this.name, "Has hit obstacle");
 		}
 	}

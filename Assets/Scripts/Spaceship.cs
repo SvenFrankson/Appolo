@@ -8,7 +8,7 @@ public abstract class Spaceship : MonoBehaviour
     public int RotPow;
     public float Cz;
     public float Cx;
-    private Rigidbody C_Rigidbody;
+	protected Rigidbody C_Rigidbody;
     private Transform LocalSpaceShip;
     public Transform CanonLeft;
     public Transform CanonRight;
@@ -18,6 +18,9 @@ public abstract class Spaceship : MonoBehaviour
 	public float Armor;
 	public float Stamina;
 	public float HitPoint;
+
+
+	protected AISpaceshipStats stats = new AISpaceshipStats();
 
 	// Use this for initialization
 	void Start () {
@@ -64,31 +67,42 @@ public abstract class Spaceship : MonoBehaviour
 
 	abstract protected void InputControl (out float forwardInput, out float rightInput);
 
-    public void Shoot()
+    public bool Shoot()
     {
 		if (this.LaserDelay > 0f) {
-			return;
+			return false;
 		} 
 		else 
 		{
 			this.LaserDelay = this.LaserCoolDown;
 		}
-		GameObject projectile = GameObject.Instantiate(Projectile);
-        projectile.transform.position = this.CanonLeft.position;
-        projectile.GetComponent<Rigidbody>().velocity = this.C_Rigidbody.velocity + this.transform.forward * 200f;
+		GameObject projectileInstance = GameObject.Instantiate(Projectile);
+		Projectile projectile = projectileInstance.GetComponent<Projectile> ();
+		projectile.Initialize (this.CanonLeft.position, this.transform.forward, this.C_Rigidbody.velocity, LogOnHit, LogOnMiss);
 
-		projectile.GetComponent<Projectile> ().Lifetime = 2f;
+		projectileInstance = GameObject.Instantiate(Projectile);
+		projectile = projectileInstance.GetComponent<Projectile> ();
+		projectile.Initialize (this.CanonRight.position, this.transform.forward, this.C_Rigidbody.velocity, LogOnHit, LogOnMiss);
 
-        projectile = GameObject.Instantiate(Projectile);
-        projectile.transform.position = this.CanonRight.position;
-        projectile.GetComponent<Rigidbody>().velocity = this.C_Rigidbody.velocity + this.transform.forward * 200f;
-
-		projectile.GetComponent<Projectile> ().Lifetime = 2f;
+		return true;
     }
 
 	public void TakeHit(float amount) 
 	{
 		float armoredAmout = amount * (1f - this.Armor);
 		this.HitPoint -= armoredAmout;
+	}
+
+	public void LogStats() {
+		Log.Info (this.name, this.stats.GetLogStats ());
+	}
+
+	public void LogOnHit(Spaceship victim) {
+		this.stats.AddAimedShot ();
+		Log.Info (this.name, "Has hit " + victim.name + ".");
+	}
+
+	public void LogOnMiss() {
+		Log.Info (this.name, "Missed a shot.");
 	}
 }

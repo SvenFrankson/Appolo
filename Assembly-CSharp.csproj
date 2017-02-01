@@ -48,6 +48,7 @@
   <ItemGroup>
      <Compile Include="Assets\Materials\RandomAsteroidsInspector.cs" />
      <Compile Include="Assets\Scripts\AISpaceship.cs" />
+     <Compile Include="Assets\Scripts\AISpaceshipStats.cs" />
      <Compile Include="Assets\Scripts\CameraControler.cs" />
      <Compile Include="Assets\Scripts\CommonGUI.cs" />
      <Compile Include="Assets\Scripts\Obstacle.cs" />
@@ -56,6 +57,7 @@
      <Compile Include="Assets\Scripts\RandomAsteroids.cs" />
      <Compile Include="Assets\Scripts\Spaceship.cs" />
      <Compile Include="Assets\Scripts\Tools\Log.cs" />
+     <Compile Include="Assets\Scripts\Tools\Zero.cs" />
      <Compile Include="Assets\Scripts\TouchControler.cs" />
      <None Include="Assets\Standard Assets\Effects\ToonShading\Shaders\ToonBasic.shader" />
      <None Include="Assets\Standard Assets\Effects\ToonShading\Shaders\ToonBasicOutline.shader" />

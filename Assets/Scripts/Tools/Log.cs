@@ -15,6 +15,7 @@ public class Log : MonoBehaviour {
 	}
     
     static private Dictionary<string, StreamWriter> LogFiles;
+	static public event Action BeforeApplicationQuit;
 
 	static Log() {
         Log.LogFiles = new Dictionary<string, StreamWriter>();
@@ -22,6 +23,7 @@ public class Log : MonoBehaviour {
 
     public void OnApplicationQuit()
     {
+		BeforeApplicationQuit ();
         foreach (StreamWriter logFile in LogFiles.Values)
         {
             string line = "Time : " + DateTime.Now + " logfile now closed.";
