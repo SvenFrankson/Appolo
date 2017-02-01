@@ -23,27 +23,30 @@ public class Obstacle : MonoBehaviour {
 
     public void Update()
     {
-		float t1 = Time.realtimeSinceStartup;
-        float alpha = Vector3.Angle(PointOfView.transform.forward, this.transform.position - PointOfView.transform.position);
-        if (alpha < PointOfView.AngleMin)
+        if (PointOfView != null)
         {
-            SetAlert(true);
-			UpdateTime += Time.realtimeSinceStartup - t1;
-            return;
-        }
-        if (alpha < PointOfView.AngleMax)
-        {
-            float sqrDist = (this.transform.position - PointOfView.transform.position).sqrMagnitude;
-            float dist = (alpha - PointOfView.AngleMin) / (PointOfView.AngleMax - PointOfView.AngleMin) * PointOfView.DistanceMax;
-            if (sqrDist < dist * dist)
+            float t1 = Time.realtimeSinceStartup;
+            float alpha = Vector3.Angle(PointOfView.transform.forward, this.transform.position - PointOfView.transform.position);
+            if (alpha < PointOfView.AngleMin)
             {
-				SetAlert(true);
-				UpdateTime += Time.realtimeSinceStartup - t1;
+                SetAlert(true);
+                UpdateTime += Time.realtimeSinceStartup - t1;
                 return;
             }
+            if (alpha < PointOfView.AngleMax)
+            {
+                float sqrDist = (this.transform.position - PointOfView.transform.position).sqrMagnitude;
+                float dist = (alpha - PointOfView.AngleMin) / (PointOfView.AngleMax - PointOfView.AngleMin) * PointOfView.DistanceMax;
+                if (sqrDist < dist * dist)
+                {
+                    SetAlert(true);
+                    UpdateTime += Time.realtimeSinceStartup - t1;
+                    return;
+                }
+            }
+            SetAlert(false);
+            UpdateTime += Time.realtimeSinceStartup - t1;
         }
-		SetAlert(false);
-		UpdateTime += Time.realtimeSinceStartup - t1;
     }
 
     public void SetAlert(bool alert)

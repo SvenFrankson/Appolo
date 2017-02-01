@@ -4,6 +4,12 @@ using System;
 
 public abstract class Spaceship : MonoBehaviour
 {
+    public enum Team
+    {
+        TeamA,
+        TeamB
+    };
+
     public int EnginePow;
     public int RotPow;
     public float Cz;
@@ -18,9 +24,10 @@ public abstract class Spaceship : MonoBehaviour
 	public float Armor;
 	public float Stamina;
 	public float HitPoint;
+    public Team SpaceShipTeam;
 
 
-	protected AISpaceshipStats stats = new AISpaceshipStats();
+    protected AISpaceshipStats stats = new AISpaceshipStats();
 
 	// Use this for initialization
 	void Start () {
@@ -103,6 +110,6 @@ public abstract class Spaceship : MonoBehaviour
 	}
 
 	public void LogOnMiss() {
-		Log.Info (this.name, "Missed a shot.");
+		//Log.Info (this.name, "Missed a shot.");
 	}
 }

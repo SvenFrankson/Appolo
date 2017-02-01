@@ -20,7 +20,7 @@ public class CommonGUI : MonoBehaviour {
 		GUILayout.TextArea ("AI control time : " + (AISpaceship.S_ControlTime / Time.realtimeSinceStartup * 100f) + " %");
 	
 		// Game informations. To be transfered to pretty GUI.
-		GUILayout.TextArea("Player : " + PlayerSpaceship.HitPoint + " / " + PlayerSpaceship.Stamina);
+		//GUILayout.TextArea("Player : " + PlayerSpaceship.HitPoint + " / " + PlayerSpaceship.Stamina);
 		for (int i = 0; i < AISpaceships.Length; i++) {
 			GUILayout.TextArea ("Foe " + i + " : " + AISpaceships [i].HitPoint + " / " + AISpaceships [i].Stamina);
 		}
