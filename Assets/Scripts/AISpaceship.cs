@@ -20,8 +20,36 @@ public class AISpaceship : Spaceship
 		Dodge
 	};
 
-	public float CloseDistance;
-	public float LongDistance;
+    // Dodge Obstacle.
+    [HideInInspector]
+    public float dodgeForwardInput;
+    [HideInInspector]
+    public float dodgeRightInputCoef;
+    [HideInInspector]
+    public float dodgeSphereCastRadius;
+    [HideInInspector]
+    public float dodgeSphereCastDistance;
+
+    // Escape
+    [HideInInspector]
+    public float escapeForwardInput;
+    [HideInInspector]
+    public float escapeRightInputCoef;
+
+    // Track
+    [HideInInspector]
+    public float trackLongForwardInput;
+    [HideInInspector]
+    public float trackLongRightInputCoef;
+    [HideInInspector]
+    public float trackShortDistance;
+    [HideInInspector]
+    public float trackLongDistance;
+    [HideInInspector]
+    public float trackMiddleRightInputCoef;
+    private float trackACoef;
+    private float trackBCoef;
+
 	private Spaceship Target;
 	private AIMode currentAIMode = AIMode.None;
 	public AIMode CurrentAIMode {
@@ -38,12 +66,14 @@ public class AISpaceship : Spaceship
 
 	override protected void OnStart ()
 	{
-		Log.BeforeApplicationQuit += this.LogStats;
+        trackACoef = 1f / (this.trackLongDistance - this.trackShortDistance);
+        trackBCoef = 1f - (this.trackLongDistance + this.trackShortDistance) / (this.trackLongDistance - this.trackShortDistance) / 2f;
+        Log.BeforeApplicationQuit += this.LogStats;
 	}
 
     protected override void OnUpdate()
     {
-        this.FindTarget();
+
     }
 
     private void FindTarget()
@@ -74,8 +104,8 @@ public class AISpaceship : Spaceship
         if (incomingObstacle)
         {
             this.CurrentAIMode = AIMode.Dodge;
-            forwardInput = 0.5f;
-            rightInput = Mathf.Sign(obstacleAngle) * (1f - obstacleAngle / 180f);
+            forwardInput = this.dodgeForwardInput;
+            rightInput = Mathf.Sign(obstacleAngle) * (1f - obstacleAngle / 90f) * this.dodgeRightInputCoef;
             return;
         }
         // If there is a potential target.
@@ -86,27 +116,25 @@ public class AISpaceship : Spaceship
             float targetAngle;
             this.TrackTarget(out targetAngle);
             // If target is too close
-            if (distance < this.CloseDistance)
+            if (distance < this.trackShortDistance)
             {
                 this.CurrentAIMode = AIMode.Escape;
-                rightInput = Mathf.Sign(targetAngle) * (1f - targetAngle / 180f);
-                forwardInput = 1f;
+                forwardInput = this.escapeForwardInput;
+                rightInput = Mathf.Sign(targetAngle) * (1f - targetAngle / 180f) * this.escapeRightInputCoef;
             }
             // If target is far
             else
             {
                 this.CurrentAIMode = AIMode.Track;
-                if (distance > this.LongDistance)
+                if (distance > this.trackLongDistance)
                 {
-                    rightInput = - (targetAngle / 180f) * 2f;
-                    forwardInput = 1f;
+                    forwardInput = this.trackLongForwardInput;
+                    rightInput = - (targetAngle / 180f) * 2f * this.trackLongRightInputCoef;
                 }
                 else
                 {
-                    rightInput = - (targetAngle / 180f) * 2f;
-                    float a = 1f / (this.LongDistance - this.CloseDistance);
-                    float b = 1f - (this.LongDistance + this.CloseDistance) / (this.LongDistance - this.CloseDistance) / 2f;
-                    forwardInput = a * distance + b;
+                    forwardInput = this.trackACoef * distance + this.trackBCoef;
+                    rightInput = - (targetAngle / 180f) * 2f * this.trackMiddleRightInputCoef;
                 }
             }
             if (Mathf.Abs(targetAngle) < 1f)
@@ -135,17 +163,17 @@ public class AISpaceship : Spaceship
     /// <returns>true if there is an incoming obstacle</returns>
     private bool IncomingObstacle(out float angle)
     {
-        Ray ray = new Ray(this.transform.position, this.C_Rigidbody.velocity);
+        Ray ray = new Ray(this.transform.position, this.transform.forward);
         RaycastHit hitInfo;
-        Physics.SphereCast(ray, 4f, out hitInfo, 20f);
+        Physics.SphereCast(ray, this.dodgeSphereCastRadius, out hitInfo, this.dodgeSphereCastDistance);
         if (hitInfo.collider != null)
         {
             Obstacle obstacle = hitInfo.collider.GetComponent<Obstacle>();
             // In case an obstacle is spotted in front of the vehicle.
             if (obstacle != null)
             {
-                angle = Vector3.Angle(this.transform.forward, obstacle.transform.position - this.transform.position);
-                Vector3 cross = Vector3.Cross(this.transform.forward, obstacle.transform.position - this.transform.position);
+                angle = Vector3.Angle(this.transform.forward, hitInfo.point - this.transform.position);
+                Vector3 cross = Vector3.Cross(this.transform.forward, hitInfo.point - this.transform.position);
                 if (cross.y > 0f)
                 {
                     angle = -angle;

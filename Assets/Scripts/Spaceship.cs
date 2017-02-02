@@ -98,6 +98,10 @@ public abstract class Spaceship : MonoBehaviour
 	{
 		float armoredAmout = amount * (1f - this.Armor);
 		this.HitPoint -= armoredAmout;
+        if (this.HitPoint <= 0f)
+        {
+            Destroy(this.gameObject);
+        }
 	}
 
 	public void LogStats() {

@@ -84,6 +84,7 @@
     <Compile Include="Assets\Scripts\Projectile.cs" />
     <Compile Include="Assets\Scripts\RandomAsteroids.cs" />
     <Compile Include="Assets\Scripts\Spaceship.cs" />
+    <Compile Include="Assets\Scripts\Spaceship3DInfo.cs" />
     <Compile Include="Assets\Scripts\Tools\Log.cs" />
     <Compile Include="Assets\Scripts\Tools\Zero.cs" />
     <Compile Include="Assets\Scripts\TouchControler.cs" />
