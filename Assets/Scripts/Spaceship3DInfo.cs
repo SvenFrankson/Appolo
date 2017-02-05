@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Spaceship3DInfo : MonoBehaviour
 {
-
     private Spaceship spaceshipTarget;
     private AISpaceship aiSpaceshipTarget;
     private TextMesh textMesh;

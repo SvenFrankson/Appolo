@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Spawner : MonoBehaviour
+public class Spawner : Objective
 {
-    public bool ActivateOnStart;
-    private bool Activated;
-    private float TimeSinceActivation;
+    private float TimeSinceActivation = 0f;
     public List<GameObject> Spawns;
+    private List<GameObject> InvokedSpawns = new List<GameObject>();
     public List<float> Delays;
-    public Spawner Next;
 
     public void Extend()
     {
@@ -22,8 +20,16 @@ public class Spawner : MonoBehaviour
             this.Delays = new List<float>();
         }
 
-        this.Spawns.Add(null);
-        this.Delays.Add(0f);
+        if (this.Spawns.Count == 0)
+        {
+            this.Spawns.Add(null);
+            this.Delays.Add(0f);
+        }
+        else
+        {
+            this.Spawns.Add(this.Spawns[this.Spawns.Count - 1]);
+            this.Delays.Add(this.Delays[this.Delays.Count - 1]);
+        }
     }
 
     public void Reduce()
@@ -39,27 +45,9 @@ public class Spawner : MonoBehaviour
         this.Spawns.RemoveAt(this.Spawns.Count - 1);
         this.Delays.RemoveAt(this.Delays.Count - 1);
     }
-
-    public void Start()
+   
+    public override void OnUpdate()
     {
-        if (this.ActivateOnStart)
-        {
-            this.Activate();
-        }
-    }
-
-    public void Activate()
-    {
-        this.Activated = true;
-    }
-
-    public void Update()
-    {
-        if (!this.Activated)
-        {
-            return;
-        }
-
         this.TimeSinceActivation += Time.deltaTime;
 
         for (int i = 0; i < this.Spawns.Count; i++)
@@ -68,29 +56,27 @@ public class Spawner : MonoBehaviour
             {
                 GameObject spawn = GameObject.Instantiate(this.Spawns[i], this.transform.position, this.transform.rotation);
                 spawn.name = "Spawn_" + i;
+                this.InvokedSpawns.Add(spawn);
+
                 this.Spawns.RemoveAt(i);
                 this.Delays.RemoveAt(i);
                 return;
             }
         }
 
+        // If all spawns have been invoked.
         if (this.Spawns.Count == 0)
         {
-            this.Deactivate();
-        }
-    }
-
-    public void Deactivate()
-    {
-        this.Activated = false;
-        if (this.Next != null)
-        {
-            this.Next.Activate();
-        }
-        else
-        {
-            // Game over, you win.
-            Debug.Log("You win !");
+            // Return if any spawn is still alive
+            foreach (GameObject g in this.InvokedSpawns)
+            {
+                if (g != null)
+                {
+                    return;
+                }
+            }
+            // Validate if all spawns are dead.
+            this.Validate();
         }
     }
 }

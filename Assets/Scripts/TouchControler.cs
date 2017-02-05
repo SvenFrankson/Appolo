@@ -23,7 +23,7 @@ public class TouchControler : MonoBehaviour {
 
 	void Start () {
         TouchControler.Instance = this;
-        size = Mathf.Min(Screen.width / 2, Screen.height / 4);
+        size = Mathf.Min(Screen.width / 3, Screen.height / 3);
         centerPad.x = Screen.width - size / 2;
         centerPad.y = size / 2;
         centerShoot.x = size / 2;
