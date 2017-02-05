@@ -23,7 +23,10 @@ public class Log : MonoBehaviour {
 
     public void OnApplicationQuit()
     {
-		BeforeApplicationQuit ();
+        if (BeforeApplicationQuit != null)
+        {
+            BeforeApplicationQuit();
+        }
         foreach (StreamWriter logFile in LogFiles.Values)
         {
             string line = "Time : " + DateTime.Now + " logfile now closed.";

@@ -26,6 +26,24 @@ public abstract class Spaceship : MonoBehaviour
 	public float HitPoint;
     public Team SpaceShipTeam;
 
+    protected float forwardInput;
+    public float ForwardInput
+    {
+        get
+        {
+            return this.forwardInput;
+        }
+    }
+    protected float rightInput;
+    public float RightInput
+    {
+        get
+        {
+            return this.rightInput;
+        }
+    }
+
+
 
     protected AISpaceshipStats stats = new AISpaceshipStats();
 
@@ -55,13 +73,15 @@ public abstract class Spaceship : MonoBehaviour
 
     public void FixedUpdate()
     {
-        float forwardInput = 0f;
-        float rightInput = 0f;
+		this.InputControl ();
 
-		this.InputControl (out forwardInput, out rightInput);
+        this.forwardInput = Mathf.Min(this.forwardInput, 1f);
+        this.forwardInput = Mathf.Max(this.forwardInput, -1f);
+        this.rightInput = Mathf.Min(this.rightInput, 1f);
+        this.rightInput = Mathf.Max(this.rightInput, -1f);
 
-        C_Rigidbody.AddForce(this.transform.forward * EnginePow * forwardInput);
-        C_Rigidbody.AddTorque(this.transform.up * RotPow * rightInput);
+        C_Rigidbody.AddForce(this.transform.forward * EnginePow * this.forwardInput);
+        C_Rigidbody.AddTorque(this.transform.up * RotPow * this.rightInput);
 
         float rightVelocity = (this.transform.worldToLocalMatrix * this.C_Rigidbody.velocity).x;
         float forwardVelocity = (this.transform.worldToLocalMatrix * this.C_Rigidbody.velocity).z;
@@ -72,7 +92,7 @@ public abstract class Spaceship : MonoBehaviour
         C_Rigidbody.AddForce(- this.transform.right * rightVelocity * Mathf.Abs(rightVelocity) * this.Cx);
     }
 
-	abstract protected void InputControl (out float forwardInput, out float rightInput);
+	abstract protected void InputControl ();
 
     public bool Shoot()
     {

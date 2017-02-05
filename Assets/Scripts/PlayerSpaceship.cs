@@ -15,13 +15,13 @@ public class PlayerSpaceship : Spaceship
 
 	protected override void OnUpdate ()
 	{
-		if (Input.GetKey(KeyCode.Space))
+		if (TouchControler.Shoot)
 		{
 			this.Shoot();
 		}
 	}
 
-	override protected void InputControl (out float forwardInput, out float rightInput)
+	override protected void InputControl ()
 	{
 		forwardInput = TouchControler.TouchValue.y;
 		rightInput = TouchControler.TouchValue.x;

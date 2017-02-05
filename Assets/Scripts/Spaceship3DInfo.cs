@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Spaceship3DInfo : MonoBehaviour {
+public class Spaceship3DInfo : MonoBehaviour
+{
 
     private Spaceship spaceshipTarget;
     private AISpaceship aiSpaceshipTarget;
@@ -23,7 +24,9 @@ public class Spaceship3DInfo : MonoBehaviour {
     {
         if (aiSpaceshipTarget != null)
         {
-            textMesh.text = "" + aiSpaceshipTarget.CurrentAIMode;
+            textMesh.text = "" + aiSpaceshipTarget.CurrentAIMode + "\n";
+            textMesh.text += "FInput = " + aiSpaceshipTarget.ForwardInput + "\n";
+            textMesh.text += "RInput = " + aiSpaceshipTarget.RightInput + "\n";
         }
     }
 }
