@@ -2,13 +2,23 @@
 using System.Collections;
 using System;
 
-public abstract class Spaceship : MonoBehaviour
+public class Spaceship : MonoBehaviour
 {
     public enum Team
     {
         TeamA,
         TeamB
     };
+
+	protected SpaceshipControler controler;
+	protected SpaceshipControler Controller {
+		get { 
+			if (this.controler == null) {
+				this.controler = this.GetComponent<SpaceshipControler> ();
+			}
+			return this.controler;
+		}
+	}
 
     public int EnginePow;
     public int RotPow;
@@ -26,7 +36,7 @@ public abstract class Spaceship : MonoBehaviour
 	public float HitPoint;
     public Team SpaceShipTeam;
 
-    protected float forwardInput;
+    private float forwardInput;
     public float ForwardInput
     {
         get
@@ -34,7 +44,7 @@ public abstract class Spaceship : MonoBehaviour
             return this.forwardInput;
         }
     }
-    protected float rightInput;
+    private float rightInput;
     public float RightInput
     {
         get
@@ -45,7 +55,7 @@ public abstract class Spaceship : MonoBehaviour
 
 
 
-    protected AISpaceshipStats stats = new AISpaceshipStats();
+    public AISpaceshipStats stats = new AISpaceshipStats();
 
 	// Use this for initialization
 	void Start () {
@@ -73,7 +83,7 @@ public abstract class Spaceship : MonoBehaviour
 
     public void FixedUpdate()
     {
-		this.InputControl ();
+		Controller.InputControl (out this.forwardInput, out this.rightInput);
 
         this.forwardInput = Mathf.Min(this.forwardInput, 1f);
         this.forwardInput = Mathf.Max(this.forwardInput, -1f);
@@ -91,8 +101,6 @@ public abstract class Spaceship : MonoBehaviour
         C_Rigidbody.AddForce(- this.transform.forward * forwardVelocity * Mathf.Abs(forwardVelocity) * this.Cz);
         C_Rigidbody.AddForce(- this.transform.right * rightVelocity * Mathf.Abs(rightVelocity) * this.Cx);
     }
-
-	abstract protected void InputControl ();
 
     public bool Shoot()
     {

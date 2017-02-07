@@ -39,7 +39,7 @@ public class TouchControler : MonoBehaviour {
         {
             this.MobileUpdate();
         }
-        else if (Application.platform == RuntimePlatform.WindowsEditor)
+		else if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.OSXEditor)
         {
             this.DesktopUpdate();
         }

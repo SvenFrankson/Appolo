@@ -4,13 +4,16 @@ using UnityEngine;
 
 public abstract class Objective : MonoBehaviour
 {
-    public bool ActivateOnStart;
-    public Objective Next;
+	private static List<Objective> Instances = new List<Objective>();
 
-    protected bool activated;
+    public bool ActivateOnStart;
+	public int Index;
+
+    protected bool activated = false;
 
     public void Start()
-    {
+	{
+		Objective.Instances.Add (this);
         this.OnStart();
         if (this.ActivateOnStart)
         {
@@ -22,6 +25,7 @@ public abstract class Objective : MonoBehaviour
     {
         if (this.activated)
         {
+			Debug.Log (this.name);
             this.OnUpdate();
         }
     }
@@ -44,13 +48,26 @@ public abstract class Objective : MonoBehaviour
     public virtual void Validate()
     {
         this.activated = false;
-        if (this.Next != null)
+		Objective next = this.FindNext ();
+        if (next != null)
         {
-            this.Next.Activate();
+            next.Activate();
         }
         else
         {
             Debug.Log("You win !");
         }
     }
+
+	private Objective FindNext() {
+		Objective next = null;
+		foreach (Objective o in Objective.Instances) {
+			if (o.Index > this.Index) {
+				if ((next == null) || (next.Index > o.Index)) {
+					next = o;
+				}
+			}
+		}
+		return next;
+	}
 }

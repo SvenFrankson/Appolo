@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AISpaceship : Spaceship
+public class AISpaceship : SpaceshipControler
 {
 	static private float ControlTime = 0f;
 	static public float S_ControlTime
@@ -65,17 +65,12 @@ public class AISpaceship : Spaceship
 		}
 	}
 
-	override protected void OnStart ()
+	public void Start ()
 	{
         trackACoef = 1f / (this.trackLongDistance - this.trackShortDistance);
         trackBCoef = 1f - (this.trackLongDistance + this.trackShortDistance) / (this.trackLongDistance - this.trackShortDistance) / 2f;
         //Log.BeforeApplicationQuit += this.LogStats;
 	}
-
-    protected override void OnUpdate()
-    {
-
-    }
 
     private void FindTarget()
 	{
@@ -83,7 +78,7 @@ public class AISpaceship : Spaceship
         Spaceship[] spaceships = FindObjectsOfType<Spaceship>();
         foreach (Spaceship spaceship in spaceships)
         {
-            if (this.SpaceShipTeam != spaceship.SpaceShipTeam)
+			if (this.Controled.SpaceShipTeam != spaceship.SpaceShipTeam)
             {
                 float dist = (this.transform.position - spaceship.transform.position).sqrMagnitude;
                 if (dist < minDist)
@@ -95,8 +90,8 @@ public class AISpaceship : Spaceship
         }
 	}
 
-	override protected void InputControl ()
-    {
+	public override void InputControl (out float forwardInput, out float rightInput)
+	{
         this.FindTarget();
         float t1 = Time.realtimeSinceStartup;
 
@@ -145,10 +140,10 @@ public class AISpaceship : Spaceship
             }
             if (Mathf.Abs(targetAngle) < 1f)
             {
-                if (this.Shoot())
+				if (Controled.Shoot())
                 {
-                    this.stats.AddShot();
-                    this.stats.AddShot();
+					Controled.stats.AddShot();
+					Controled.stats.AddShot();
                 }
             }
         }
@@ -212,7 +207,7 @@ public class AISpaceship : Spaceship
 	public void OnCollisionEnter(Collision collision){
 		Obstacle obstacle = collision.gameObject.GetComponent<Obstacle> ();
 		if (obstacle != null) {
-			this.stats.AddCollision ();
+			Controled.stats.AddCollision ();
 			//Log.Info (this.name, "Has hit obstacle");
 		}
 	}

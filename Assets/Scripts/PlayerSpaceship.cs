@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerSpaceship : Spaceship 
+public class PlayerSpaceship : SpaceshipControler 
 {
 	public float DistanceMax;
 	public float AngleMin;
@@ -13,15 +13,15 @@ public class PlayerSpaceship : Spaceship
 		//GUILayout.TextArea (this.HitPoint + " / " + this.Stamina);
 	}
 
-	protected override void OnUpdate ()
+	public void Update ()
 	{
 		if (TouchControler.Shoot)
 		{
-			this.Shoot();
+			Controled.Shoot();
 		}
 	}
 
-	override protected void InputControl ()
+	public override void InputControl (out float forwardInput, out float rightInput)
 	{
 		forwardInput = TouchControler.TouchValue.y;
 		rightInput = TouchControler.TouchValue.x;

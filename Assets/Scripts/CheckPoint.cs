@@ -6,28 +6,31 @@ using UnityEngine;
 public class CheckPoint : Objective
 {
     public float Size;
-    public float sqrSize;
-    public PlayerSpaceship playerSpaceship;
-    public GameObject deactivatedModel;
-    public GameObject activatedModel;
+    private float sqrSize;
+    private PlayerSpaceship playerSpaceship;
+	private GameObject deactivatedModel;
+	private GameObject DeactivatedModel {
+		get { 
+			if (this.deactivatedModel == null) {
+				this.deactivatedModel = this.transform.Find ("DeactivatedModel").gameObject;
+			}
+			return this.deactivatedModel;
+		}
+	}
+	private GameObject activatedModel;
+	private GameObject ActivatedModel {
+		get { 
+			if (this.activatedModel == null) {
+				this.activatedModel = this.transform.Find ("ActivatedModel").gameObject;
+			}
+			return this.activatedModel;
+		}
+	}
 
     public override void OnStart()
     {
         this.sqrSize = this.Size * this.Size;
         this.playerSpaceship = FindObjectOfType<PlayerSpaceship>();
-        Transform[] children = this.transform.GetComponentsInChildren<Transform>(true);
-        foreach (Transform t in children)
-        {
-            if (t.name == "DeactivatedModel")
-            {
-                this.deactivatedModel = t.gameObject;
-            }
-            else if (t.name == "ActivatedModel")
-            {
-                this.activatedModel = t.gameObject;
-            }
-        }
-        Debug.Log(".");
     }
 
     public override void OnUpdate()
@@ -40,16 +43,16 @@ public class CheckPoint : Objective
     }
 
     public override void Activate()
-    {
+	{
         base.Activate();
-        this.deactivatedModel.SetActive(false);
-        this.activatedModel.SetActive(true);
+		this.DeactivatedModel.SetActive(false);
+		this.ActivatedModel.SetActive(true);
     }
 
     public override void Validate()
     {
         base.Validate();
-        this.deactivatedModel.SetActive(true);
-        this.activatedModel.SetActive(false);
+		this.DeactivatedModel.SetActive(true);
+		this.ActivatedModel.SetActive(false);
     }
 }

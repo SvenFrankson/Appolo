@@ -22,7 +22,7 @@ public class CommonGUI : MonoBehaviour {
 		// Game informations. To be transfered to pretty GUI.
 		//GUILayout.TextArea("Player : " + PlayerSpaceship.HitPoint + " / " + PlayerSpaceship.Stamina);
 		for (int i = 0; i < AISpaceships.Length; i++) {
-			GUILayout.TextArea ("Foe " + i + " : " + AISpaceships [i].HitPoint + " / " + AISpaceships [i].Stamina);
+			//GUILayout.TextArea ("Foe " + i + " : " + AISpaceships [i].HitPoint + " / " + AISpaceships [i].Stamina);
 		}
 	}
 }
