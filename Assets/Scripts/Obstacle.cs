@@ -13,31 +13,45 @@ public class Obstacle : MonoBehaviour {
 		}
 	}
 
-	public PlayerSpaceship PointOfView;
-    private bool Alert = false;
+	private PlayerSpaceship PointOfView;
+    private bool Alert;
+    private GameObject wrongWay;
+    private GameObject WrongWay
+    {
+        get
+        {
+            if (this.wrongWay == null)
+            {
+                this.wrongWay = this.transform.FindChild("WrongWay").gameObject;
+            }
+            return this.wrongWay;
+        }
+    }
 
 	public void Start() 
 	{
 		this.PointOfView = FindObjectOfType<PlayerSpaceship> ();
+        this.SetAlert(false);
+        this.SwitchAlertFalse();
 	}
 
     public void Update()
     {
+        if (this.Alert)
+        {
+            float rotationSpeed = Vector3.Angle(this.WrongWay.transform.forward, this.PointOfView.transform.forward);
+            rotationSpeed = 1f - Mathf.Abs(90f - rotationSpeed) / 90f;
+            rotationSpeed = 45f + rotationSpeed * 315f;
+            this.WrongWay.transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
+        }
         if (PointOfView != null)
         {
             float t1 = Time.realtimeSinceStartup;
             float alpha = Vector3.Angle(PointOfView.transform.forward, this.transform.position - PointOfView.transform.position);
-            if (alpha < PointOfView.AngleMin)
-            {
-                SetAlert(true);
-                UpdateTime += Time.realtimeSinceStartup - t1;
-                return;
-            }
-            if (alpha < PointOfView.AngleMax)
+            if (alpha < PointOfView.Angle)
             {
                 float sqrDist = (this.transform.position - PointOfView.transform.position).sqrMagnitude;
-                float dist = (alpha - PointOfView.AngleMin) / (PointOfView.AngleMax - PointOfView.AngleMin) * PointOfView.DistanceMax;
-                if (sqrDist < dist * dist)
+                if (sqrDist < PointOfView.DistanceMax * PointOfView.DistanceMax)
                 {
                     SetAlert(true);
                     UpdateTime += Time.realtimeSinceStartup - t1;
@@ -67,28 +81,12 @@ public class Obstacle : MonoBehaviour {
 
     public void SwitchAlertTrue()
     {
-        HighLight(Color.red, 0.005f);
+        this.WrongWay.SetActive(true);
+        this.WrongWay.transform.LookAt(PointOfView.transform);
     }
 
     public void SwitchAlertFalse()
     {
-        HighLight(Color.black, 0.005f);
-    }
-
-    public void HighLight(Color color, float outlineWidth)
-    {
-        Renderer[] renderers = this.GetComponentsInChildren<Renderer>();
-        List<Material> materials = new List<Material>();
-
-        foreach (Renderer r in renderers)
-        {
-            materials.AddRange(r.GetComponent<Renderer>().materials);
-        }
-
-        foreach (Material material in materials)
-        {
-            material.SetColor("_OutlineColor", color);
-            material.SetFloat("_Outline", outlineWidth);
-        }
+        this.WrongWay.SetActive(false);
     }
 }

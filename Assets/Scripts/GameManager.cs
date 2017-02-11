@@ -62,13 +62,13 @@ public class GameManager : MonoBehaviour {
 
 	public void OnGUI() {
         GUI.skin = this.Skin;
-        GUILabelResponsive(20, 50, 20, 50, "Appolo");
+        GUILabelResponsive(15, 50, 20, 50, "Appolo");
 		if (!GameManager.gameOn) {
             for (int i = 0; i < this.Levels.Count; i++)
             {
                 int x = i % 4;
                 int y = i / 4;
-                if (GUIButtonResponsive(y * 20 + 60, (x + 1) * 20, 15, 15, this.Levels[i].name))
+                if (GUIButtonResponsive(y * 20 + 40, (x + 1) * 20, 15, 15, this.Levels[i].name))
                 {
                     this.LoadLevel(this.Levels[i]);
                 }

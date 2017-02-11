@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraControler : MonoBehaviour {
-
+    
     private Transform camPositionTarget;
 	private Transform CamPositionTarget {
 		get { 
@@ -26,11 +26,10 @@ public class CameraControler : MonoBehaviour {
 
     public float Smoothness;
 
-	void FixedUpdate () {
+	public void FixedUpdate () {
 		if (this.CamPositionTarget != null && this.CamSpaceshipTarget != null) {
-			this.transform.position = this.transform.position * this.Smoothness + CamPositionTarget.transform.position * (1f - this.Smoothness);
-			this.transform.LookAt(CamSpaceshipTarget, Vector3.up);
-
+            this.transform.position = this.transform.position * this.Smoothness + CamPositionTarget.transform.position * (1f - this.Smoothness);
+            this.transform.LookAt(CamSpaceshipTarget, Vector3.up);
 		}
 	}
 }

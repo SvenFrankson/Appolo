@@ -27,7 +27,9 @@ public class Spaceship : MonoBehaviour
 	protected Rigidbody C_Rigidbody;
     private Transform LocalSpaceShip;
     public Transform CanonLeft;
+    public ParticleSystem CanonLeftSound;
     public Transform CanonRight;
+    public ParticleSystem CanonRightSound;
     public GameObject Projectile;
 	public float LaserCoolDown;
 	private float laserDelay;
@@ -118,12 +120,14 @@ public class Spaceship : MonoBehaviour
 		GameObject projectileInstance = GameObject.Instantiate(Projectile);
 		Projectile projectile = projectileInstance.GetComponent<Projectile> ();
 		projectile.Initialize (this.CanonLeft.position, this.transform.forward, this.C_Rigidbody.velocity, LogOnHit, LogOnMiss);
+        CanonLeftSound.Emit(1);
 
 		projectileInstance = GameObject.Instantiate(Projectile);
 		projectile = projectileInstance.GetComponent<Projectile> ();
 		projectile.Initialize (this.CanonRight.position, this.transform.forward, this.C_Rigidbody.velocity, LogOnHit, LogOnMiss);
+        CanonRightSound.Emit(1);
 
-		return true;
+        return true;
     }
 
 	public void TakeHit(float amount) 

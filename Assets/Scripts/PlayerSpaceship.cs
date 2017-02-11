@@ -5,8 +5,7 @@ using UnityEngine;
 public class PlayerSpaceship : SpaceshipControler 
 {
 	public float DistanceMax;
-	public float AngleMin;
-	public float AngleMax;
+    public float Angle;
 
 	public void OnGUI()
 	{
