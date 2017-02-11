@@ -35,14 +35,16 @@ public class TouchControler : MonoBehaviour {
         Shoot = false;
         touchValue = Vector2.zero;
 
-        if (Application.platform == RuntimePlatform.Android)
-        {
-            this.MobileUpdate();
-        }
-		else if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.OSXEditor)
-        {
-            this.DesktopUpdate();
-        }
+		if (GameManager.GameOn) {
+			if (Application.platform == RuntimePlatform.Android)
+			{
+				this.MobileUpdate();
+			}
+			else if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.OSXEditor)
+			{
+				this.DesktopUpdate();
+			}
+		}
     }
 
     public void MobileUpdate()

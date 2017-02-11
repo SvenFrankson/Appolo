@@ -51,6 +51,7 @@
      <Compile Include="Assets\Scripts\CameraControler.cs" />
      <Compile Include="Assets\Scripts\CheckPoint.cs" />
      <Compile Include="Assets\Scripts\CommonGUI.cs" />
+     <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\Level.cs" />
      <Compile Include="Assets\Scripts\Objective.cs" />
      <Compile Include="Assets\Scripts\Obstacle.cs" />

@@ -30,10 +30,15 @@ public class Spaceship : MonoBehaviour
     public Transform CanonRight;
     public GameObject Projectile;
 	public float LaserCoolDown;
-	private float LaserDelay;
+	private float laserDelay;
 	public float Armor;
 	public float Stamina;
-	public float HitPoint;
+	private float hitPoint;
+	public float HitPoint {
+		get { 
+			return this.hitPoint;
+		}
+	}
     public Team SpaceShipTeam;
 
     private float forwardInput;
@@ -61,25 +66,24 @@ public class Spaceship : MonoBehaviour
 	void Start () {
         this.C_Rigidbody = this.GetComponent<Rigidbody>();
         this.LocalSpaceShip = this.transform.FindChild("LocalSpaceShip");
-		this.OnStart ();
+		this.Reset ();
 	}
 
-	virtual protected void OnStart () 
-	{
-		// Do nothing.
+	public void Reset() {
+		this.hitPoint = this.Stamina;
+		this.laserDelay = 0f;
+		this.C_Rigidbody.velocity = Vector3.zero;
+		this.C_Rigidbody.MovePosition (Vector3.zero);
+		this.C_Rigidbody.MoveRotation (Quaternion.identity);
+		this.forwardInput = 0f;
+		this.rightInput = 0f;
+		this.ClearTrailsAsync ();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		this.OnUpdate ();
-		this.LaserDelay -= Time.deltaTime;
+		this.laserDelay -= Time.deltaTime;
 	}
-
-	virtual protected void OnUpdate() 
-	{
-		// Do nothing.
-	}
-		
 
     public void FixedUpdate()
     {
@@ -104,12 +108,12 @@ public class Spaceship : MonoBehaviour
 
     public bool Shoot()
     {
-		if (this.LaserDelay > 0f) {
+		if (this.laserDelay > 0f) {
 			return false;
 		} 
 		else 
 		{
-			this.LaserDelay = this.LaserCoolDown;
+			this.laserDelay = this.LaserCoolDown;
 		}
 		GameObject projectileInstance = GameObject.Instantiate(Projectile);
 		Projectile projectile = projectileInstance.GetComponent<Projectile> ();
@@ -125,8 +129,8 @@ public class Spaceship : MonoBehaviour
 	public void TakeHit(float amount) 
 	{
 		float armoredAmout = amount * (1f - this.Armor);
-		this.HitPoint -= armoredAmout;
-        if (this.HitPoint <= 0f)
+		this.hitPoint -= armoredAmout;
+        if (this.hitPoint <= 0f)
         {
             Destroy(this.gameObject);
         }
@@ -144,4 +148,18 @@ public class Spaceship : MonoBehaviour
 	public void LogOnMiss() {
 		//Log.Info (this.name, "Missed a shot.");
 	}
+
+	#region Graphic
+	public void ClearTrailsAsync() {
+		StartCoroutine (ClearTrails());
+	}
+
+	public IEnumerator ClearTrails() {
+		yield return false;
+		TrailRenderer[] trails = this.GetComponentsInChildren<TrailRenderer> ();
+		foreach (TrailRenderer trail in trails) {
+			trail.Clear ();
+		}
+	}
+	#endregion
 }

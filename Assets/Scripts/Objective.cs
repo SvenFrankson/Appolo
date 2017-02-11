@@ -6,26 +6,25 @@ public abstract class Objective : MonoBehaviour
 {
 	private static List<Objective> Instances = new List<Objective>();
 
-    public bool ActivateOnStart;
 	public int Index;
 
     protected bool activated = false;
 
     public void Start()
 	{
-		Objective.Instances.Add (this);
         this.OnStart();
-        if (this.ActivateOnStart)
-        {
-            this.Activate();
-        }
     }
+
+	public void Register() {
+		if (!Objective.Instances.Contains (this)) {
+			Objective.Instances.Add (this);
+		}
+	}
 
     public void Update()
     {
         if (this.activated)
         {
-			Debug.Log (this.name);
             this.OnUpdate();
         }
     }
@@ -56,8 +55,20 @@ public abstract class Objective : MonoBehaviour
         else
         {
             Debug.Log("You win !");
+			GameManager.GameOver (true);
         }
     }
+
+	public static Objective FindFirst() {
+		Objective first = null;
+		foreach (Objective o in Objective.Instances) {
+			if ((first == null) || (first.Index > o.Index)) {
+				first = o;
+
+			}
+		}
+		return first;
+	}
 
 	private Objective FindNext() {
 		Objective next = null;

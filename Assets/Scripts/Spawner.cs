@@ -5,8 +5,10 @@ using UnityEngine;
 public class Spawner : Objective
 {
     private float TimeSinceActivation = 0f;
+	[HideInInspector]
     public List<GameObject> Spawns;
     private List<GameObject> InvokedSpawns = new List<GameObject>();
+	[HideInInspector]
     public List<float> Delays;
 
     public void Extend()

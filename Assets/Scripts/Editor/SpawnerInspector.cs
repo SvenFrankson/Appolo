@@ -21,7 +21,7 @@ public class SpawnerInspector : Editor
 
     public override void OnInspectorGUI()
     {
-        Target.ActivateOnStart = EditorGUILayout.Toggle("Activate On Start", Target.ActivateOnStart);
+		base.DrawDefaultInspector ();
         if (Target.Spawns != null)
         {
             for (int i = 0; i < Target.Spawns.Count; i++)
