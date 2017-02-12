@@ -31,6 +31,7 @@ public class Spaceship : MonoBehaviour
     public Transform CanonRight;
     public ParticleSystem CanonRightSound;
     public GameObject Projectile;
+    public ParticleSystem BangSound;
 	public float LaserCoolDown;
 	private float laserDelay;
 	public float Armor;
@@ -150,11 +151,27 @@ public class Spaceship : MonoBehaviour
 	}
 
 	public void LogOnMiss() {
-		//Log.Info (this.name, "Missed a shot.");
-	}
+        //Log.Info (this.name, "Missed a shot.");
+    }
 
-	#region Graphic
-	public void ClearTrailsAsync() {
+    public void OnCollisionEnter(Collision collision)
+    {
+        Obstacle obstacle = collision.gameObject.GetComponent<Obstacle>();
+        if (obstacle != null)
+        {
+            Vector3 bangPosition = Vector3.zero;
+            foreach (ContactPoint point in collision.contacts)
+            {
+                bangPosition += point.point;
+            }
+            bangPosition = bangPosition / collision.contacts.Length;
+            this.BangSound.transform.position = bangPosition;
+            this.BangSound.Emit(1);
+        }
+    }
+
+    #region Graphic
+    public void ClearTrailsAsync() {
 		StartCoroutine (ClearTrails());
 	}
 
